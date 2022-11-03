@@ -1,0 +1,67 @@
+---
+- name: Ensure OpenSSL is installed.
+  package:
+    name: openssl
+    state: present
+
+- name: Ensure certificate folder exists.
+  file:
+    path: "{{ ssl_certs_path }}"
+    state: directory
+    owner: "{{ certs_owner }}"
+    group: "{{ certs_group }}"
+    mode: "{{ certs_mode }}"
+
+- name: Create private key file.
+  community.crypto.openssl_privatekey:
+    path: "{{ certs_private_key_path }}"
+    backup: "{{ certs_backup }}"
+    owner: "{{ certs_owner }}"
+    group: "{{ certs_group }}"
+    mode: "{{ certs_mode }}"
+    state: present
+    type: "{{ certs_private_key_type }}"
+
+- name: Create certificate signing request.
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ certs_private_key_path }}"
+    common_name: "{{certs_common_name }}"
+    country_name: "{{ certs_country }}"
+    email_address: "{{ certs_email }}"
+    locality_name: "{{ certs_locality }}"
+    organization_name: "{{ certs_organization }}"
+    subject_alt_name: "{{ certs_sans }}"
+  register: csr
+
+- name: Check wether certificate exists.
+  stat:
+    path: "{{ certs_cert_path }}"
+  register: certificate_exists
+
+- name: Read existing certificate if exists.
+  slurp:
+    src: "{{ certs_cert_path }}"
+  when: certificate_exists.stat.exists
+  register: certificate
+
+- name: Sign certificate request.
+  community.crypto.x509_certificate_pipe:
+    content: "{{ (certificate.content | b64decode) if certificate_exists.stat.exists else omit }}"
+    csr_content: "{{ csr.csr }}"
+    provider: "ownca"
+    ownca_path: "{{ badfever_ca }}"
+    ownca_privatekey_path: "{{ certs_ca_private_key_path }}"
+    ownca_privatekey_passphrase: "{{ certs_ca_private_key_passphrase }}"
+    ownca_not_after: "+{{ certs_days_valid }}d"
+    ownca_not_before: -1d
+  delegate_to: localhost
+  register: certificate
+
+- name: Copy signed certificate.
+  ansible.builtin.copy:
+    dest: "{{ certs_cert_path }}"
+    content: "{{ certificate.certificate }}"
+    owner: "{{ certs_owner }}"
+    group: "{{ certs_group }}"
+    mode: "{{ certs_mode }}"
+  when: certificate is changed

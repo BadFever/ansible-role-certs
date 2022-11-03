@@ -1,0 +1,29 @@
+# CA configuration on ansible-controller
+certs_ca_path: ""
+certs_ca_private_key_path: ""
+certs_ca_private_key_passphrase: ""
+
+# Certificate request information
+certs_country: "DE"
+certs_locality: "NRW"
+certs_organization: "Your company"
+certs_common_name: "{{ ansible_fqdn }}"
+certs_san_name: "{{ certs_common_name }}"
+certs_email: "local@localhost.local"
+certs_days_valid: 365
+certs_key_size: 4096
+certs_sans:
+  - "DNS:{{ certs_common_name }}"
+
+# The signed certificate
+certs_path: "/etc/ssl/{{ ssl_certs_common_name }}"
+certs_private_key_path: "{{ certs_path }}/{{ certs_common_name }}.key"
+certs_cert_path: "{{ certs_path }}/{{ certs_common_name }}.pem"
+certs_csr_path: "{{ certs_path }}/{{ certs_common_name }}.csr"
+certs_private_key_type: "Ed25519"
+
+certs_owner: "root"
+certs_group: "root"
+certs_mode: "0700"
+
+certs_backup: true
