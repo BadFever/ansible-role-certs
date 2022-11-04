@@ -16,7 +16,7 @@ certs_sans:
   - "DNS:{{ certs_common_name }}"
 
 # The signed certificate
-certs_path: "/etc/ssl/{{ ssl_certs_common_name }}"
+certs_path: "/etc/ssl/{{ certs_common_name }}"
 certs_private_key_path: "{{ certs_path }}/{{ certs_common_name }}.key"
 certs_cert_path: "{{ certs_path }}/{{ certs_common_name }}.pem"
 certs_csr_path: "{{ certs_path }}/{{ certs_common_name }}.csr"
