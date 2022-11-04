@@ -48,6 +48,7 @@
   stat:
     path: "{{ certs_ca_path }}"
   delegate_to: localhost
+  become: false
   register: ca_certificate_exists
 
 - name: Read CA certificate.
@@ -55,6 +56,7 @@
     src: "{{ certs_ca_path }}"
   when: ca_certificate_exists.stat.exists
   delegate_to: localhost
+  become: false
   register: ca_certificate
 
 - name: Sign certificate request.
