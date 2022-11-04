@@ -1,7 +1,18 @@
+---
 # CA configuration on ansible-controller
 certs_ca_path: ""
 certs_ca_private_key_path: ""
 certs_ca_private_key_passphrase: ""
+
+# Certificate and key location
+certs_path: "/etc/ssl/{{ certs_common_name }}"
+certs_private_key_path: "{{ certs_path }}/{{ certs_common_name }}.key"
+certs_cert_path: "{{ certs_path }}/{{ certs_common_name }}.pem"
+certs_csr_path: "{{ certs_path }}/{{ certs_common_name }}.csr"
+certs_owner: "root"
+certs_group: "root"
+certs_mode: "0644"
+certs_backup: true
 
 # Certificate request information
 certs_country: "DE"
@@ -11,19 +22,10 @@ certs_common_name: "{{ ansible_fqdn }}"
 certs_san_name: "{{ certs_common_name }}"
 certs_email: "local@localhost.local"
 certs_days_valid: 365
-certs_key_size: 4096
+
 certs_sans:
   - "DNS:{{ certs_common_name }}"
 
-# The signed certificate
-certs_path: "/etc/ssl/{{ certs_common_name }}"
-certs_private_key_path: "{{ certs_path }}/{{ certs_common_name }}.key"
-certs_cert_path: "{{ certs_path }}/{{ certs_common_name }}.pem"
-certs_csr_path: "{{ certs_path }}/{{ certs_common_name }}.csr"
+# Private key configurations
 certs_private_key_type: "RSA"
-
-certs_owner: "root"
-certs_group: "root"
-certs_mode: "0644"
-
-certs_backup: true
+certs_key_size: 4096
