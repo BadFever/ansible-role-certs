@@ -47,12 +47,14 @@
 - name: Check wether ca certificate exists.
   stat:
     path: "{{ certs_ca_path }}"
+  delegate_to: localhost
   register: ca_certificate_exists
 
 - name: Read CA certificate.
   slurp:
     src: "{{ certs_ca_path }}"
   when: ca_certificate_exists.stat.exists
+  delegate_to: localhost
   register: ca_certificate
 
 - name: Sign certificate request.
