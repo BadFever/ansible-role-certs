@@ -55,6 +55,7 @@
     ownca_not_after: "+{{ certs_days_valid }}d"
     ownca_not_before: -1d
   delegate_to: localhost
+  become: false
   register: certificate
 
 - name: Copy signed certificate.
