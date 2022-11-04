@@ -80,7 +80,7 @@
 
 - name: Copy certificate chain.
   ansible.builtin.copy:
-    dest: "{{ certs_cert_path }}"
+    dest: "{{ certs_chained_path }}"
     content: "{{ certificate.certificate }}\n{{ ca_certificate.content if ca_certificate_exists.stat.exists else omit }}"
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
