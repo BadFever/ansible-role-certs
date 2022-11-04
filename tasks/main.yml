@@ -52,7 +52,7 @@
 - name: Read CA certificate.
   slurp:
     src: "{{ certs_ca_path }}"
-  when: certificate_exists.stat.exists
+  when: ca_certificate_exists.stat.exists
   register: ca_certificate
 
 - name: Sign certificate request.
@@ -81,7 +81,7 @@
 - name: Copy certificate chain.
   ansible.builtin.copy:
     dest: "{{ certs_cert_path }}"
-    content: "{{ certificate.certificate }}\n{{ ca_certificate.content }}"
+    content: "{{ certificate.certificate }}\n{{ ca_certificate.content if ca_certificate_exists.stat.exists else omit }}"
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
     mode: "{{ certs_mode }}"
