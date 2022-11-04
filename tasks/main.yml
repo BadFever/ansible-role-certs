@@ -44,6 +44,17 @@
   when: certificate_exists.stat.exists
   register: certificate
 
+- name: Check wether ca certificate exists.
+  stat:
+    path: "{{ certs_ca_path }}"
+  register: ca_certificate_exists
+
+- name: Read CA certificate.
+  slurp:
+    src: "{{ certs_ca_path }}"
+  when: certificate_exists.stat.exists
+  register: ca_certificate
+
 - name: Sign certificate request.
   community.crypto.x509_certificate_pipe:
     content: "{{ (certificate.content | b64decode) if certificate_exists.stat.exists else omit }}"
@@ -62,6 +73,15 @@
   ansible.builtin.copy:
     dest: "{{ certs_cert_path }}"
     content: "{{ certificate.certificate }}"
+    owner: "{{ certs_owner }}"
+    group: "{{ certs_group }}"
+    mode: "{{ certs_mode }}"
+  when: certificate is changed
+
+- name: Copy certificate chain.
+  ansible.builtin.copy:
+    dest: "{{ certs_cert_path }}"
+    content: "{{ certificate.certificate }}\n{{ ca_certificate.content }}"
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
     mode: "{{ certs_mode }}"
