@@ -49,7 +49,7 @@
     content: "{{ (certificate.content | b64decode) if certificate_exists.stat.exists else omit }}"
     csr_content: "{{ csr.csr }}"
     provider: "ownca"
-    ownca_path: "{{ badfever_ca }}"
+    ownca_path: "{{ certs_ca_path }}"
     ownca_privatekey_path: "{{ certs_ca_private_key_path }}"
     ownca_privatekey_passphrase: "{{ certs_ca_private_key_passphrase }}"
     ownca_not_after: "+{{ certs_days_valid }}d"
