@@ -6,7 +6,7 @@
 
 - name: Ensure certificate folder exists.
   file:
-    path: "{{ ssl_certs_path }}"
+    path: "{{ certs_path }}"
     state: directory
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
