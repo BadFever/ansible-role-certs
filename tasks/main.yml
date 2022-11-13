@@ -59,9 +59,6 @@
   become: false
   register: ca_certificate
 
-- name: Debug CA certificate.
-  debug:
-    msg: "{{ ca_certificate }}"
 
 - name: Sign certificate request.
   community.crypto.x509_certificate_pipe:
@@ -89,7 +86,9 @@
 - name: Copy certificate chain.
   ansible.builtin.copy:
     dest: "{{ certs_chained_path }}"
-    content: "{{ certificate.certificate }}\n{{ ca_certificate.content }}\n"
+    content: |
+      {{ certificate.certificate }}
+      {{ lookup('file', certs_ca_path) }}
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
     mode: "{{ certs_mode }}"
