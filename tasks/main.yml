@@ -59,6 +59,10 @@
   become: false
   register: ca_certificate
 
+- name: Debug CA certificate.
+  debug:
+    msg: "{{ ca_certificate }}"
+
 - name: Sign certificate request.
   community.crypto.x509_certificate_pipe:
     content: "{{ (certificate.content | b64decode) if certificate_exists.stat.exists else omit }}"
