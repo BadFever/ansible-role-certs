@@ -87,8 +87,7 @@
   ansible.builtin.copy:
     dest: "{{ certs_chained_path }}"
     content: |
-      {{ certificate.certificate }}
-      {{ lookup('file', certs_ca_path) }}
+      {{ certificate.certificate }}{{ lookup('file', certs_ca_path) }}
     owner: "{{ certs_owner }}"
     group: "{{ certs_group }}"
     mode: "{{ certs_mode }}"
